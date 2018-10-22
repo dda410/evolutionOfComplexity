@@ -2,11 +2,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
 
-    private static final int POPULATION_SIZE = 10;
     private static final String GOAL_STRING = "me thinks it is like a weasel";
     private static final int ASCII_LOWER_LIMIT = 32;
     private static final int ASCII_UPPER_LIMIT = 127;
-    private static final int MUTATION_PROBABILITY = 3;
+    private static final int[] MUTATION_PROBABILITIES = {3, 6, 12};
+    private static final int[] POPULATION_SIZES = {10, 20, 50, 100, 200, 500, 1000};
 
     private static String generateRandomString(int size) {
         String result = "";
@@ -25,7 +25,8 @@ public class Main {
         }
         return population;
     }
-    
+
+    // Debugging utility to print all the population individuals
     private static void printPopulation(Individual[] pop) {
         for (Individual individual: pop) {
             System.out.println(individual.toString());
@@ -40,35 +41,34 @@ public class Main {
         return maxVal;
     }
 
-    private static void basicHillClimber(Individual x, Individual goalIndividual) {
+    private static int basicHillClimber(Individual x, Individual goalIndividual, int mutationProbability) {
         int iterations = 0;
         while(x.getFitnessValue() < goalIndividual.getFitnessValue()) {
             Individual guineaPig = x.clone();
-            guineaPig.mutateIndividual(MUTATION_PROBABILITY, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
+            guineaPig.mutateIndividual(mutationProbability, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
             if(guineaPig.getFitnessValue() > x.getFitnessValue()) {
                 x = guineaPig;
             }
             iterations++;
         }
-        System.out.println("Number of iterations with basic hill climber: " + iterations);
+        return iterations;
     }
 
     // mutation hill climber with population
-    private static void mutationHillClimber(Individual[] population, Individual goalIndividual) {
+    private static int mutationHillClimber(Individual[] population, Individual goalIndividual, int mutationProbability) {
         int size = population.length;
         int iterations = 0;
         while(goalIndividual.getFitnessValue() > populationMaxFitness(population)) {
-//            System.out.println("max val individual is: " + populationMaxFitness(population));
             for (int i = 0; i < size; i++) {
                 Individual guineaPig = population[i].clone();
-                guineaPig.mutateIndividual(MUTATION_PROBABILITY, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
+                guineaPig.mutateIndividual(mutationProbability, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
                 if(guineaPig.getFitnessValue() > population[i].getFitnessValue()) {
                     population[i] = guineaPig;
                 }
             }
             iterations++;
         }
-        System.out.println("Number of iterations with hill climber: " + iterations);
+        return iterations;
     }
 
     private static Individual popRandomIndividual(Individual[] population) {
@@ -87,15 +87,18 @@ public class Main {
         }
     }
 
-    // GA algorithm with tournament selection and without crossover
-    private static void tournamentSelection(Individual[] population, Individual goalIndividual) {
+    /* SYNOPSIS (GA algorithm with tournament selection and without crossover):
+     * 2 random individuals -> fitter one will be the parent
+     * Mutation stage -> mutate the generated child
+     * 2 random individuals -> substitute less fit with the generated child. */
+    private static int tournamentSelection(Individual[] population, Individual goalIndividual, int mutationProbability) {
         int iterations = 0;
         while(goalIndividual.getFitnessValue() > populationMaxFitness(population)) {
             // Chose fittest parent between two random individuals
             Individual parentA = popRandomIndividual(population);
             Individual parentB = popRandomIndividual(population);
             Individual parentSelected = parentA.getFitnessValue() > parentB.getFitnessValue() ? parentA.clone() : parentB.clone();
-            parentSelected.mutateIndividual(MUTATION_PROBABILITY, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
+            parentSelected.mutateIndividual(mutationProbability, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
             // Select individual to be replaced as less fit among two random individuals
             Individual replaceA = popRandomIndividual(population);
             Individual replaceB = popRandomIndividual(population);
@@ -105,7 +108,7 @@ public class Main {
             replaceSelected.setStringAndFitness(parentSelected.getString(), parentSelected.getFitnessValue());
             iterations++;
         }
-        System.out.println("Number of iterations with tournament selection: " + iterations);
+        return iterations;
     }
 
     private static Individual crossover(String mother, String father) {
@@ -118,7 +121,13 @@ public class Main {
         return new Individual(childString, GOAL_STRING);
     }
 
-    private static void crossoverAlgorithm(Individual[] population, Individual goalIndividual) {
+    /* SYNOPSIS (Genetic algorithm with crossover):
+     * 2 Random individuals -> fitter one will be the mother
+     * 2 Random individuals -> fitter one will be the father
+     * Reproduction stage -> generate child individual from the genes of the parents (uniform crossover)
+     * Mutation stage -> mutate the generated child
+     * 2 Random individuals -> substitute less fit wiht the generated child. */
+    private static int crossoverAlgorithm(Individual[] population, Individual goalIndividual, int mutationProbability) {
         int iterations = 0;
         while(goalIndividual.getFitnessValue() > populationMaxFitness(population)) {
             // Select mother as fittest between two random individuals
@@ -131,7 +140,7 @@ public class Main {
             Individual father = parentC.getFitnessValue() > parentD.getFitnessValue() ? parentC : parentD;
             // Generate child as crossover of two parents and mutate it
             Individual child = crossover(mother.getString(), father.getString());
-            child.mutateIndividual(MUTATION_PROBABILITY, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
+            child.mutateIndividual(mutationProbability, ASCII_LOWER_LIMIT, ASCII_UPPER_LIMIT, GOAL_STRING);
             // Select individual to be replaced as less fit among two random individuals
             Individual replaceA = popRandomIndividual(population);
             Individual replaceB = popRandomIndividual(population);
@@ -140,32 +149,37 @@ public class Main {
             replaceSelected.setStringAndFitness(child.getString(), child.getFitnessValue());
             iterations++;
         }
-        System.out.println("Number of iterations with crossover algorithm: " + iterations);
+        return iterations;
+    }
+
+    private static void printAlgorithmStats(String name, int iterations, int popSize, int mutationProb) {
+        System.out.format("%s,%d,%d,%d\n", name, mutationProb, popSize, iterations);
     }
 
     public static void main(String[] args) {
         // Generating goal individual
         Individual goalIndividual = new Individual(GOAL_STRING, GOAL_STRING);
-        System.out.println("GOAL INDIVIDUAL:");
-        System.out.println(goalIndividual.toString());
-        // Basic Hill climber with just one individual
-        System.out.println("\nBASIC HILL CLIMBER ALGORITHM STAGE\n==================================");
-        Individual x = new Individual(generateRandomString(GOAL_STRING.length()), GOAL_STRING);
-        basicHillClimber(x, goalIndividual);
-        // Hill climber algorithm
-        System.out.println("\nHILL CLIMBER ALGORITHM STAGE\n==================================");
-        Individual[] population = generatePopulation(POPULATION_SIZE);
-        mutationHillClimber(population, goalIndividual);
-        printPopulation(population);
-        // Tournament selection algorithm
-        System.out.println("\nTOURNAMENT SELECTION ALGORITHM STAGE\n==================================");
-        population = generatePopulation(500);
-        tournamentSelection(population, goalIndividual);
-        printPopulation(population);
-        // Crossover algorithm
-        System.out.println("\nCROSSOVER GENETIC ALGORITHM STAGE\n==================================");
-        population = generatePopulation(500);
-        crossoverAlgorithm(population, goalIndividual);
-        printPopulation(population);
+        System.out.println("ALGORITHM NAME, MUTATION PROBABILITY, POPULATION SIZE, ITERATIONS");
+        int iterations = 0;
+        for(int mutationProbability : MUTATION_PROBABILITIES) {
+            // Basic Hill climber with just one individual
+            Individual x = new Individual(generateRandomString(GOAL_STRING.length()), GOAL_STRING);
+            iterations = basicHillClimber(x, goalIndividual, mutationProbability);
+            printAlgorithmStats("Basic Hill Climber", iterations, 1, mutationProbability);
+            for(int popSize : POPULATION_SIZES) {
+                // Hill climber algorithm
+                Individual[] population = generatePopulation(popSize);
+                iterations = mutationHillClimber(population, goalIndividual, mutationProbability);
+                printAlgorithmStats("Hill Climber", iterations, popSize, mutationProbability);
+                // Tournament selection algorithm
+                population = generatePopulation(popSize);
+                iterations = tournamentSelection(population, goalIndividual, mutationProbability);
+                printAlgorithmStats("Tournament Selection", iterations, popSize, mutationProbability);
+                // Crossover algorithm
+                population = generatePopulation(popSize);
+                iterations = crossoverAlgorithm(population, goalIndividual, mutationProbability);
+                printAlgorithmStats("Crossover Genetic Alg", iterations, popSize, mutationProbability);
+            }
+        }
     }
 }
