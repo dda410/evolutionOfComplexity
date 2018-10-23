@@ -7,6 +7,7 @@ public class Main {
     private static final int ASCII_UPPER_LIMIT = 127;
     private static final int[] MUTATION_PROBABILITIES = {3, 6, 12};
     private static final int[] POPULATION_SIZES = {10, 20, 50, 100, 200, 500, 1000};
+    private static final int TESTING_TIMES = 10;
 
     private static String generateRandomString(int size) {
         String result = "";
@@ -65,8 +66,8 @@ public class Main {
                 if(guineaPig.getFitnessValue() > population[i].getFitnessValue()) {
                     population[i] = guineaPig;
                 }
+                iterations++;
             }
-            iterations++;
         }
         return iterations;
     }
@@ -163,22 +164,35 @@ public class Main {
         int iterations = 0;
         for(int mutationProbability : MUTATION_PROBABILITIES) {
             // Basic Hill climber with just one individual
-            Individual x = new Individual(generateRandomString(GOAL_STRING.length()), GOAL_STRING);
-            iterations = basicHillClimber(x, goalIndividual, mutationProbability);
-            printAlgorithmStats("Basic Hill Climber", iterations, 1, mutationProbability);
+            iterations = 0;
+            for (int i = 0; i < TESTING_TIMES; i++) {
+                Individual x = new Individual(generateRandomString(GOAL_STRING.length()), GOAL_STRING);
+                iterations += basicHillClimber(x, goalIndividual, mutationProbability);
+            }
+            printAlgorithmStats("Basic Hill Climber", (int) Math.round((double) iterations / TESTING_TIMES), 1, mutationProbability);
             for(int popSize : POPULATION_SIZES) {
                 // Hill climber algorithm
-                Individual[] population = generatePopulation(popSize);
-                iterations = mutationHillClimber(population, goalIndividual, mutationProbability);
-                printAlgorithmStats("Hill Climber", iterations, popSize, mutationProbability);
+                iterations = 0;
+                Individual[] population;
+                for (int i = 0; i < TESTING_TIMES; i++) {
+                    population = generatePopulation(popSize);
+                    iterations += mutationHillClimber(population, goalIndividual, mutationProbability);
+                }
+                printAlgorithmStats("Hill Climber", (int) Math.round((double) iterations / TESTING_TIMES), popSize, mutationProbability);
                 // Tournament selection algorithm
-                population = generatePopulation(popSize);
-                iterations = tournamentSelection(population, goalIndividual, mutationProbability);
-                printAlgorithmStats("Tournament Selection", iterations, popSize, mutationProbability);
+                iterations = 0;
+                for (int i = 0; i < TESTING_TIMES; i++) {
+                    population = generatePopulation(popSize);
+                    iterations += tournamentSelection(population, goalIndividual, mutationProbability);
+                }
+                printAlgorithmStats("Tournament Selection", (int) Math.round((double) iterations / TESTING_TIMES), popSize, mutationProbability);
                 // Crossover algorithm
-                population = generatePopulation(popSize);
-                iterations = crossoverAlgorithm(population, goalIndividual, mutationProbability);
-                printAlgorithmStats("Crossover Genetic Alg", iterations, popSize, mutationProbability);
+                iterations = 0;
+                for (int i = 0; i < TESTING_TIMES; i++) {
+                    population = generatePopulation(popSize);
+                    iterations += crossoverAlgorithm(population, goalIndividual, mutationProbability);
+                }
+                printAlgorithmStats("Crossover Genetic Alg", (int) Math.round((double) iterations / TESTING_TIMES), popSize, mutationProbability);
             }
         }
     }
