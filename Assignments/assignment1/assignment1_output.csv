@@ -1,0 +1,67 @@
+ALGORITHM NAME, MUTATION PROBABILITY, POPULATION SIZE, ITERATIONS
+Crossover Genetic Alg,6,500,13308
+Crossover Genetic Alg,3,1000,15950
+Crossover Genetic Alg,3,500,17522
+Crossover Genetic Alg,6,100,18143
+Crossover Genetic Alg,3,50,18523
+Crossover Genetic Alg,6,50,18898
+Crossover Genetic Alg,6,20,19092
+Crossover Genetic Alg,6,10,19410
+Crossover Genetic Alg,3,200,19544
+Crossover Genetic Alg,3,100,20242
+Crossover Genetic Alg,6,1000,20353
+Crossover Genetic Alg,3,20,20507
+Crossover Genetic Alg,3,10,21055
+Crossover Genetic Alg,6,200,22272
+Basic Hill Climber,3,1,22780
+Basic Hill Climber,6,1,25494
+Tournament Selection,3,50,26913
+Tournament Selection,3,20,28241
+Crossover Genetic Alg,12,100,31517
+Tournament Selection,3,100,32522
+Crossover Genetic Alg,12,500,33967
+Tournament Selection,6,10,35227
+Tournament Selection,3,10,37259
+Tournament Selection,6,20,38274
+Crossover Genetic Alg,12,50,39173
+Crossover Genetic Alg,12,200,41526
+Crossover Genetic Alg,12,1000,47066
+Tournament Selection,3,200,48226
+Tournament Selection,6,100,50975
+Basic Hill Climber,12,1,56224
+Tournament Selection,6,50,61446
+Tournament Selection,3,500,69802
+Tournament Selection,6,200,74684
+Crossover Genetic Alg,12,20,113991
+Tournament Selection,3,1000,123222
+Tournament Selection,6,500,135673
+Hill Climber,3,10,143434
+Hill Climber,6,10,149082
+Crossover Genetic Alg,12,10,166426
+Tournament Selection,6,1000,189989
+Hill Climber,3,20,249528
+Hill Climber,6,20,256000
+Tournament Selection,12,10,298360
+Hill Climber,12,10,313894
+Tournament Selection,12,20,351139
+Tournament Selection,12,50,500101
+Hill Climber,6,50,538285
+Hill Climber,12,20,561456
+Hill Climber,3,50,584245
+Tournament Selection,12,100,611905
+Tournament Selection,12,500,653250
+Tournament Selection,12,200,807575
+Hill Climber,6,100,963900
+Hill Climber,3,100,1010440
+Tournament Selection,12,1000,1052216
+Hill Climber,12,50,1206090
+Hill Climber,6,200,1764920
+Hill Climber,3,200,1853660
+Hill Climber,12,100,2028030
+Hill Climber,12,200,3328860
+Hill Climber,6,500,3910850
+Hill Climber,3,500,4300400
+Hill Climber,6,1000,7700300
+Hill Climber,12,500,7839950
+Hill Climber,3,1000,8475000
+Hill Climber,12,1000,13938300
