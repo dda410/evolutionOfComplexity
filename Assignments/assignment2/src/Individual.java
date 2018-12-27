@@ -56,4 +56,9 @@ public class Individual {
     public int hashCode() {
         return Objects.hash(selfishGene, largeGroupGene);
     }
+
+    public Individual clone() {
+        return new Individual(this.isSelfishGene(), this.isLargeGroupGene());
+    }
+
 }
