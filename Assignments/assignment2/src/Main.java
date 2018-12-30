@@ -1,3 +1,4 @@
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -66,8 +67,8 @@ public class Main {
         return result;
     }
 
-    private static double computeNextGeneration(long thisGeneSize, double thisGeneGrowth, double thisGeneConsumption,
-                                             long thatGeneSize, double thatGeneGrowth, double thatGeneConsumption, double resources) {
+    private static double computeNextGeneration(double thisGeneSize, double thisGeneGrowth, double thisGeneConsumption,
+                                             double thatGeneSize, double thatGeneGrowth, double thatGeneConsumption, double resources) {
         double resourceShare = ( (thisGeneSize * thisGeneGrowth * thisGeneConsumption) /
                 (thatGeneSize * thatGeneGrowth * thatGeneConsumption + thisGeneSize * thisGeneGrowth * thisGeneConsumption) ) * resources;
         return thisGeneSize + (resourceShare / thisGeneConsumption) - DEATH_RATE * thisGeneSize;
@@ -98,23 +99,20 @@ public class Main {
         ArrayList<GroupFrequencies> groupsWithFrequencies = translateGroupsToFrequencies(groups, cheater, cooperator);
         int groupSize = largeGroup ? LARGE_GROUP_SIZE : SMALL_GROUP_SIZE;
         double groupResources = largeGroup ? LARGE_GROUP_RESOURCE : SMALL_GROUP_RESOURCE;
-        long totalNumberOfCheaters = 0;
-        long totalNumberOfCooperators = 0;
+        double totalNumberOfCheaters = 0;
+        double totalNumberOfCooperators = 0;
         for (int i = 0; i < TIME_IN_GROUP; i++) {
             totalNumberOfCheaters = 0;
             totalNumberOfCooperators = 0;
             int index = 0;
             for (GroupFrequencies group : groupsWithFrequencies) {
 //                double groupResources = (1 + group.getSize() / SMALL_GROUP_SIZE * BONUS_RESOURCE) * group.getSize();
-                long numberOfCheaters = group.getSizeOfGenotype(cheater);
-                long numberOfCooperators = group.getSizeOfGenotype(cooperator);
-                if(numberOfCheaters <= 0 || numberOfCooperators <= 0) {
-                    continue;
-                }
-                long nextNumberOfCheaters = (long) Math.round(computeNextGeneration(numberOfCheaters, Individual.GROWTH_SELFISH, Individual.CONSUMPTION_SELFISH,
-                        numberOfCooperators, Individual.GROWTH_COOPERATIVE, Individual.CONSUMPTION_COOPERATIVE, groupResources));
-                long nextNumberOfCooperators = (long) Math.round(computeNextGeneration(numberOfCooperators, Individual.GROWTH_COOPERATIVE, Individual.CONSUMPTION_COOPERATIVE,
-                        numberOfCheaters, Individual.GROWTH_SELFISH, Individual.CONSUMPTION_SELFISH, groupResources));
+                double numberOfCheaters = group.getSizeOfGenotype(cheater);
+                double numberOfCooperators = group.getSizeOfGenotype(cooperator);
+                double nextNumberOfCheaters = computeNextGeneration(numberOfCheaters, Individual.GROWTH_SELFISH, Individual.CONSUMPTION_SELFISH,
+                        numberOfCooperators, Individual.GROWTH_COOPERATIVE, Individual.CONSUMPTION_COOPERATIVE, groupResources);
+                double nextNumberOfCooperators = computeNextGeneration(numberOfCooperators, Individual.GROWTH_COOPERATIVE, Individual.CONSUMPTION_COOPERATIVE,
+                        numberOfCheaters, Individual.GROWTH_SELFISH, Individual.CONSUMPTION_SELFISH, groupResources);
                 groupsWithFrequencies.set(index, new GroupFrequencies(new IndividualFrequencies(nextNumberOfCheaters, cheater), new IndividualFrequencies(nextNumberOfCooperators, cooperator)));
 //                groups.set(index, generatePopulationWithDistribution(new int[]{nextNumberOfCheaters, nextNumberOfCooperators}, cheater, cooperator));
                 index++;
@@ -158,7 +156,11 @@ public class Main {
             IndividualFrequencies smallCooperativeFrequencies = smallGroupFrequencies.getIndividualFrequency(COOPERATIVE_SMALL);
             double x = largeSelfishFrequencies.getFrequency() * POPULATION_SIZE / (largeGroupsFrequencies.getSize() + smallGroupFrequencies.getSize());
             IndividualFrequencies ls = new IndividualFrequencies((long) x, SELFISH_LARGE);
-//            System.out.println(ls.getFrequency());
+            System.out.println(largeSelfishFrequencies.getFrequency());
+            System.out.println(largeCooperativeFrequencies.getFrequency());
+            System.out.println(smallSelfishFrequencies.getFrequency());
+            System.out.println(smallCooperativeFrequencies.getFrequency());
+            System.out.println(ls.getFrequency());
             x = largeCooperativeFrequencies.getFrequency() * POPULATION_SIZE / (largeGroupsFrequencies.getSize() + smallGroupFrequencies.getSize());
             IndividualFrequencies lc = new IndividualFrequencies((long) x, COOPERATIVE_LARGE);
 //            System.out.println(lc.getFrequency());
