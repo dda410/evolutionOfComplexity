@@ -23,7 +23,7 @@ public class GroupFrequencies {
         return result;
     }
 
-    public long getSizeOfGenotype(Individual individual) {
+    public double getSizeOfGenotype(Individual individual) {
         for (IndividualFrequencies ind : groupFrequencies) {
             if (ind.getIndividualType().equals(individual)) {
                 return ind.getFrequency();
