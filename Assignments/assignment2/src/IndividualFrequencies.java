@@ -1,13 +1,13 @@
 public class IndividualFrequencies {
 
     private Individual individualType;
-    private long frequency;
+    private double frequency;
 
     public IndividualFrequencies() {
 
     }
 
-    public IndividualFrequencies(long frequency, Individual individualType) {
+    public IndividualFrequencies(double frequency, Individual individualType) {
         this.individualType = individualType;
         this.frequency = frequency;
     }
@@ -16,7 +16,7 @@ public class IndividualFrequencies {
         return individualType;
     }
 
-    public long getFrequency() {
+    public double getFrequency() {
         return frequency;
     }
 
