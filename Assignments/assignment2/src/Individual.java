@@ -35,14 +35,6 @@ public class Individual {
         return largeGroupGene;
     }
 
-    public double getGrowthRate() {
-        return selfishGene ? GROWTH_SELFISH : GROWTH_COOPERATIVE;
-    }
-
-    public double getConsumptionRate() {
-        return selfishGene ? CONSUMPTION_SELFISH : CONSUMPTION_COOPERATIVE;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
