@@ -6,7 +6,6 @@ public class Individual {
     public static final double GROWTH_SELFISH = 0.02;
     public static final double CONSUMPTION_COOPERATIVE = 0.1;
     public static final double CONSUMPTION_SELFISH = 0.2;
-    public static final int POSSIBLE_COMBINATIONS = 4;
     private boolean selfishGene;
     private boolean largeGroupGene;
 
