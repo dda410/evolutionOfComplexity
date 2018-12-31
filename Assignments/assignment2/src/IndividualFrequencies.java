@@ -31,4 +31,8 @@ public class IndividualFrequencies {
                 ", frequency=" + frequency +
                 '}';
     }
+
+    public IndividualFrequencies clone() {
+        return new IndividualFrequencies(this.frequency, individualType.clone());
+    }
 }
