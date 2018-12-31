@@ -21,11 +21,10 @@ public class Main {
 
     private static ArrayList<Individual> generatePopulation() {
         ArrayList<Individual> population = new ArrayList<>();
-        for (int i = 0; i < POPULATION_SIZE / Individual.POSSIBLE_COMBINATIONS; i++) {
-            population.add(new Individual(true, true));
-            population.add(new Individual(false, true));
-            population.add(new Individual(true, false));
-            population.add(new Individual(false, false));
+        for (int i = 0; i < POPULATION_SIZE / ALL_INDIVIDUALS.length; i++) {
+            for (Individual individual : ALL_INDIVIDUALS) {
+                population.add(individual.clone());
+            }
         }
         return population;
     }
@@ -43,17 +42,6 @@ public class Main {
             }
         }
         return allGroups;
-    }
-
-    private static void printGroups(ArrayList<ArrayList> groups) {
-        int i = 1;
-        for (ArrayList<Individual> group : groups) {
-            System.out.println("Printing group number " + i);
-            for (Individual ind : group) {
-                System.out.println(ind);
-            }
-            i++;
-        }
     }
 
     private static double computeNextGeneration(double thisGeneSize, double thisGeneGrowth, double thisGeneConsumption,
@@ -116,7 +104,6 @@ public class Main {
         }
     }
 
-
     public static void main(String[] args) {
         // 1: Generate population of N individuals. Equiprobable distribution of genotypes.
         ArrayList<Individual> population = generatePopulation();
@@ -133,28 +120,8 @@ public class Main {
             GroupFrequencies currentGeneration = smallGroupFrequencies.mergeWithGroup(largeGroupsFrequencies);
             currentGeneration.rescaleGroup(POPULATION_SIZE);
             allGenerationsFrequencies.add(currentGeneration);
-
-//            IndividualFrequencies largeSelfishFrequencies = largeGroupsFrequencies.getIndividualFrequency(SELFISH_LARGE);
-//            IndividualFrequencies largeCooperativeFrequencies = largeGroupsFrequencies.getIndividualFrequency(COOPERATIVE_LARGE);
-//            IndividualFrequencies smallSelfishFrequencies = smallGroupFrequencies.getIndividualFrequency(SELFISH_SMALL);
-//            IndividualFrequencies smallCooperativeFrequencies = smallGroupFrequencies.getIndividualFrequency(COOPERATIVE_SMALL);
-//            // 5: Rescale migrant pool back to population original size N
-//            double x = largeSelfishFrequencies.getFrequency() * POPULATION_SIZE / (largeGroupsFrequencies.getSize() + smallGroupFrequencies.getSize());
-//            IndividualFrequencies ls = new IndividualFrequencies((long) x, SELFISH_LARGE);
-//            x = largeCooperativeFrequencies.getFrequency() * POPULATION_SIZE / (largeGroupsFrequencies.getSize() + smallGroupFrequencies.getSize());
-//            IndividualFrequencies lc = new IndividualFrequencies((long) x, COOPERATIVE_LARGE);
-//            x = smallSelfishFrequencies.getFrequency() * POPULATION_SIZE / (largeGroupsFrequencies.getSize() + smallGroupFrequencies.getSize());
-//            IndividualFrequencies ss = new IndividualFrequencies((long) x, SELFISH_SMALL);
-//            x = smallCooperativeFrequencies.getFrequency() * POPULATION_SIZE / (largeGroupsFrequencies.getSize() + smallGroupFrequencies.getSize());
-//            IndividualFrequencies sc = new IndividualFrequencies((long) x, COOPERATIVE_SMALL);
-//            population = generatePopulationGivenFrequencies(ls, lc, ss, sc);
-            population = generatePopulationGivenFrequencies(currentGeneration.getFrequencies());
-//            System.out.println(Collections.frequency(population, SELFISH_LARGE));
-//            System.out.println(Collections.frequency(population, COOPERATIVE_LARGE));
-//            System.out.println(Collections.frequency(population, SELFISH_SMALL));
-//            System.out.println(Collections.frequency(population, COOPERATIVE_SMALL));
-//            System.out.println();
             // 6: Repeat from step 2 for N generations.
+            population = generatePopulationGivenFrequencies(currentGeneration.getFrequencies());
         }
         printGenerations(allGenerationsFrequencies);
     }
