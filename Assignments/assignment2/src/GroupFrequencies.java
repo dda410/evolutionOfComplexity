@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class GroupFrequencies {
     private IndividualFrequencies[] groupFrequencies;
 
@@ -9,10 +7,6 @@ public class GroupFrequencies {
 
     public GroupFrequencies(IndividualFrequencies ... groupFrequencies) {
         this.groupFrequencies = groupFrequencies;
-    }
-
-    public IndividualFrequencies[] getGroupFrequencies() {
-        return groupFrequencies;
     }
 
     public int getSize() {
@@ -32,6 +26,10 @@ public class GroupFrequencies {
         return 0;
     }
 
+    public int getNumberOfGenotypes() {
+        return this.groupFrequencies.length;
+    }
+
     public IndividualFrequencies getIndividualFrequency(Individual individualType) {
         for (IndividualFrequencies ind:groupFrequencies) {
             if(ind.getIndividualType().equals(individualType)) {
@@ -45,10 +43,22 @@ public class GroupFrequencies {
         return groupFrequencies;
     }
 
-    @Override
-    public String toString() {
-        return "GroupFrequencies{" +
-                "groupFrequencies=" + Arrays.toString(groupFrequencies) +
-                '}';
+    public GroupFrequencies mergeWithGroup(GroupFrequencies other) {
+        IndividualFrequencies [] individualFrequencies = new IndividualFrequencies[this.groupFrequencies.length + other.getNumberOfGenotypes()];
+        for (int i = 0; i < this.groupFrequencies.length; i++) {
+            individualFrequencies[i] = this.groupFrequencies[i].clone();
+        }
+        IndividualFrequencies[] otherIndividualFrequencies = other.getFrequencies();
+        for (int i = 0; i < otherIndividualFrequencies.length; i++) {
+            individualFrequencies[i + this.groupFrequencies.length] = otherIndividualFrequencies[i].clone();
+        }
+        return new GroupFrequencies(individualFrequencies);
+    }
+
+    public void rescaleGroup(int populationSize) {
+        int totalCurrentSize = this.getSize();
+        for (IndividualFrequencies ind : this.groupFrequencies) {
+            ind.setFrequency((long) ind.getFrequency() * populationSize / totalCurrentSize);
+        }
     }
 }
