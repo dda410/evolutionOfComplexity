@@ -1,3 +1,5 @@
+import com.sun.org.apache.bcel.internal.generic.POP;
+
 import java.lang.reflect.Array;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ public class Main {
     private static final int POPULATION_SIZE = 4000;
     private static final int GENERATIONS = 1000;
     private static final int TIME_IN_GROUP = 4;
+    private static final int TIME_IN_GROUP2 = 5;
     private static final int SMALL_GROUP_SIZE = 4;
     private static final int LARGE_GROUP_SIZE = 40;
     private static final double SMALL_GROUP_RESOURCE = 4;
@@ -69,14 +72,14 @@ public class Main {
         return result;
     }
 
-    private static GroupFrequencies reproductionStep(ArrayList<ArrayList> groups, boolean largeGroup) {
+    private static GroupFrequencies reproductionStep(ArrayList<ArrayList> groups, boolean largeGroup, int timeInGroups) {
         Individual cheater = largeGroup ? SELFISH_LARGE : SELFISH_SMALL;
         Individual cooperator = largeGroup ? COOPERATIVE_LARGE : COOPERATIVE_SMALL;
         ArrayList<GroupFrequencies> groupsWithFrequencies = translateGroupsToFrequencies(groups, cheater, cooperator);
         double groupResources = largeGroup ? LARGE_GROUP_RESOURCE : SMALL_GROUP_RESOURCE;
         double totalNumberOfCheaters = 0;
         double totalNumberOfCooperators = 0;
-        for (int i = 0; i < TIME_IN_GROUP; i++) {
+        for (int i = 0; i < timeInGroups; i++) {
             totalNumberOfCheaters = 0;
             totalNumberOfCooperators = 0;
             int index = 0;
@@ -107,22 +110,44 @@ public class Main {
     public static void main(String[] args) {
         // 1: Generate population of N individuals. Equiprobable distribution of genotypes.
         ArrayList<Individual> population = generatePopulation();
+        ArrayList<Individual> populationT5 = generatePopulation();
         ArrayList<GroupFrequencies> allGenerationsFrequencies = new ArrayList<>();
+        ArrayList<GroupFrequencies> allGenerationsFrequenciesT5 = new ArrayList<>();
         for (int i = 0; i < GENERATIONS / TIME_IN_GROUP; i++) {
             Collections.shuffle(population);
+            Collections.shuffle(populationT5);
             // 2: Divide into groups
             ArrayList<ArrayList> smallGroups = computeGroups(population, SMALL_GROUP_SIZE, false);
             ArrayList<ArrayList> largeGroups = computeGroups(population, LARGE_GROUP_SIZE, true);
+            ArrayList<ArrayList> smallGroupsT5 = computeGroups(populationT5, SMALL_GROUP_SIZE, false);
+            ArrayList<ArrayList> largeGroupsT5 = computeGroups(populationT5, LARGE_GROUP_SIZE, true);
             // 3: Reproduction step
-            GroupFrequencies largeGroupsFrequencies = reproductionStep(largeGroups, true);
-            GroupFrequencies smallGroupFrequencies = reproductionStep(smallGroups, false);
+            GroupFrequencies largeGroupsFrequencies = reproductionStep(largeGroups, true, TIME_IN_GROUP);
+            GroupFrequencies smallGroupFrequencies = reproductionStep(smallGroups, false, TIME_IN_GROUP);
+            GroupFrequencies largeGroupsFrequenciesT5 = reproductionStep(largeGroupsT5, true, TIME_IN_GROUP2);
+            GroupFrequencies smallGroupFrequenciesT5 = reproductionStep(smallGroupsT5, false, TIME_IN_GROUP2);
             // 4: Return progeny to the migrant pool
             GroupFrequencies currentGeneration = smallGroupFrequencies.mergeWithGroup(largeGroupsFrequencies);
-            currentGeneration.rescaleGroup(POPULATION_SIZE);
+            GroupFrequencies currentGenerationT5 = smallGroupFrequenciesT5.mergeWithGroup(largeGroupsFrequenciesT5);
+            int totalSize = currentGeneration.getSize() + currentGenerationT5.getSize();
+            if(currentGeneration.getSize() > 0) {
+                int populationMagnitudeT4 = currentGeneration.getSize() * POPULATION_SIZE / totalSize;
+                currentGeneration.rescaleGroup(populationMagnitudeT4);
+            }
+            if(currentGenerationT5.getSize() > 0) {
+                int populationMagnitudeT5 = currentGenerationT5.getSize() * POPULATION_SIZE / totalSize;
+                currentGenerationT5.rescaleGroup(populationMagnitudeT5);
+            }
+//            currentGeneration.rescaleGroup(POPULATION_SIZE);
+//            currentGenerationT5.rescaleGroup(POPULATION_SIZE);
             allGenerationsFrequencies.add(currentGeneration);
+            allGenerationsFrequenciesT5.add(currentGenerationT5);
             // 6: Repeat from step 2 for N generations.
             population = generatePopulationGivenFrequencies(currentGeneration.getFrequencies());
+            populationT5 = generatePopulationGivenFrequencies(currentGenerationT5.getFrequencies());
         }
         printGenerations(allGenerationsFrequencies);
+        System.out.println();
+        printGenerations(allGenerationsFrequenciesT5);
     }
 }
