@@ -138,8 +138,6 @@ public class Main {
                 int populationMagnitudeT5 = currentGenerationT5.getSize() * POPULATION_SIZE / totalSize;
                 currentGenerationT5.rescaleGroup(populationMagnitudeT5);
             }
-//            currentGeneration.rescaleGroup(POPULATION_SIZE);
-//            currentGenerationT5.rescaleGroup(POPULATION_SIZE);
             allGenerationsFrequencies.add(currentGeneration);
             allGenerationsFrequenciesT5.add(currentGenerationT5);
             // 6: Repeat from step 2 for N generations.
@@ -147,7 +145,8 @@ public class Main {
             populationT5 = generatePopulationGivenFrequencies(currentGenerationT5.getFrequencies());
         }
         printGenerations(allGenerationsFrequencies);
-        System.out.println();
+//        System.out.println();
         printGenerations(allGenerationsFrequenciesT5);
+        System.out.printf("%d %d", TIME_IN_GROUP, TIME_IN_GROUP2);
     }
 }
