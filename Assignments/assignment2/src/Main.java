@@ -145,7 +145,6 @@ public class Main {
             populationT5 = generatePopulationGivenFrequencies(currentGenerationT5.getFrequencies());
         }
         printGenerations(allGenerationsFrequencies);
-//        System.out.println();
         printGenerations(allGenerationsFrequenciesT5);
         System.out.printf("%d %d", TIME_IN_GROUP, TIME_IN_GROUP2);
     }
