@@ -24,7 +24,7 @@
 
 \begin{document}
 %
-\title{Cooperative and Selfish Groups Evolvability}
+\title{Cooperative and Selfish Group Evolvability}
 %
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
@@ -255,16 +255,61 @@ original model.
 \subsection{Implementation}
 We implemented this extension part by modifying the Main class of the
 existing Java sources written to test Powers' research
-reproducibility (see code at appendix \ref{mainext}). For testing
-purposes, we limited $t$ to only take two different values per
+reproducibility (see code at appendix \ref{mainext}). We used the
+exact same parameters describe in table \ref{tab_parameters}, with the
+exception of the $t$ value. For testing
+purposes, we limited $t$ to take only two different values per
 execution. This means that every execution will consist of eight species,
-four with $t1$ value and four with $t2$ value for the $t$ gene. We
+four with $t_1$ value and four with $t_2$ value for the $t$ gene. We
 implemented two different migrant pools according to the $t$
 gene. This, however, does not affect the results since the
 normalization phase rescales the distribution like there is only one
-population.
-\subsection{Results}
+population. 
 
+\subsection{Results}
+In this section we analyze the results obtained by testing different
+values for the $t$ gene against each other. We first consider the case
+when $t_1 = 4$ and $t_2 = 5$. Figures \ref{figt4t5A} and \ref{figt4t5B}
+summarize the results. We can observe that giving the same parameters
+we obtain two different results. This happens because of the
+randomness of the aggregation phase. Since reproduction is applied
+only within groups, how these groups are formed can influence the
+number of the species' offspring. The important data to analyze,
+however, is not only the genotype that reaches fixation, but how the small
+groups of the $t5$ are behaving. We can see that in both cases the
+\textit{Selfish + Small + $t_5$} drive the \textit{Cooperative +
+Small + $t_5$} type extinct. We can see the same pattern in figures
+\ref{figt2t3} and \ref{figt9t8}. When $t <= 4$ in small groups the
+cooperators are favoured, but when $t > 4$ the cheaters have an higher
+growth in the small groups. This indicates that the fixed
+environmental value of $t$ in Powers research played a role in
+facilitating the small cooperators to emerge against the small selfish
+individuals. Furthermore, we can see the model limitations in the fact
+that, as seen in all the aforementioned figures (\ref{figt4t5A},
+\ref{figt4t5B}, \ref{figt2t3}, \ref{figt9t8}), applying only
+reproduction between groups facilitates the Individuals with a larger
+$t$ value.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{./img/Figure_t4t5A.png}
+\caption{Population with $t_1 = 4$ and $t_2 = 5$.} \label{figt4t5A}
+\end{figure}
+
+
+\begin{figure}
+\includegraphics[width=\textwidth]{./img/Figure_t4t5B.png}
+\caption{Population with $t_1 = 4$ and $t_2 = 5$.} \label{figt4t5B}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{./img/Figure_t2t3.png}
+\caption{Population with $t_1 = 2$ and $t_2 = 3$.} \label{figt2t3}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{./img/Figure_t9t8.png}
+\caption{Population with $t_1 = 9$ and $t_2 = 8$.} \label{figt9t8}
+\end{figure}
 
 \section{Conclusion}
 
