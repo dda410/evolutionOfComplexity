@@ -207,6 +207,37 @@ the replicator equation (\ref{offspring}) was not producing integers,
 after some testing, we decided to round the offspring during the
 normalization step.
 
+\subsection{Results}
+In this section we analyze the results obtained. Figure \ref{fig1}
+summarizes the obtained results. The code that produced figure
+\ref{fig1} can be found in appendix \ref{plot1}.
+\begin{figure}
+\includegraphics[width=\textwidth]{./img/Figure_1a.png}
+\caption{The reimplementation results.} \label{fig1}
+\end{figure}
+Our reimplementation, as the results confirm, work as expected and
+reproduces the results obtained by Powers. We can observer that in our
+reimplementation as well the individual type \textit{Cooperators +
+  Small} win over the other species. We can see that, around
+generation 20, the selfish large starts diminishing and both the
+individuals with the small group gene start rising. Once the
+\textit{Selfish + Large} species is extinct the \textit{Cooperators +
+  Small} wins over the other small group individual type. The
+\textit{Selfish + Large} individuals extinction is caused because,
+after driving the \textit{Cooperators + Large} species extinct they
+loose the advantage of consuming the cooperators resources. Meanwhile
+between the small species the cooperators win over the cheaters since
+they have an advantage when group size is 4 and the generations spent
+reproducing within the group is 4.
+
+
+\section{Extension}
+
+
+
+
+
+
 \section{random}
 \subsection{Genetic algorithm}
 As already anticipated, this algorithm works by creating a fixed size population
@@ -447,6 +478,9 @@ This appendix section contains the source code of the program:
 
 \subsection{GroupFrequencies.java}\label{groupfre}
 \lstinputlisting[language=Java]{./src/GroupFrequencies.java}
+
+\subsection{plotBacteria.py}\label{plot1}
+\lstinputlisting[language=Java]{./src/plotBacteria.py}
 
 %% \section{Appendix B: program output}\label{appendixB}
 %% This appendix section contains a complete output of the program:
