@@ -52,8 +52,8 @@ the paper \textit{Individual
 Selection For Cooperative Group Formation} \cite{groups}. In the first
 part of this paper we discuss and reimplement the model described in
 \cite{groups} that aims at evolving cooperative and selfish traits. In
-the second part we extend the paper by applying the niche construction
-process to the time spent reproducing in groups parameter.
+the second part we extend the research by applying the niche construction
+process to the $t$ parameter, the time spent for within group reproduction.
 %\keywords{First keyword  \and Second keyword \and Another keyword.}
 \end{abstract}
 %
@@ -62,15 +62,15 @@ process to the time spent reproducing in groups parameter.
 
 \section{Introduction}
 The biological inspiration of the research is bacteria growth. In this
-biological scenario we can observe the different types of bacteria,
-that under limited resources they behave in a cooperative way (growing
-slower and consuming less) or in a selfish one (growing faster and
+biological scenario we can observe the different types of bacteria
+that, under limited resources, behave in a cooperative way (growing
+slower and consuming less resources) or in a selfish one (growing faster and
 consuming more resources).
-The originality of \textit{T. Powers} research \cite{groups} lies in
+The originality of Powers research \cite{groups} lies in
 the fact that cooperation is not favoured by environmental
 conditions. Techniques like spatially structured population, described
-in \cite{b1,b2,b3,b5}, or not sharing resources with the rest of the
-population are avoided. Another approach that is avoided in the
+in \cite{b1,b2,b3,b5}, and not sharing resources with the rest of the
+group are avoided. Another approach that is avoided in the
 paper is the trait group aggregation shown in \cite{b6,b7,b8}. Trait
 group aggregation favours the cooperators by exploiting the
 differential group productivity. Other environmental settings that
@@ -81,7 +81,7 @@ point of the paper is, hence, to observe which genetic trait will
 emerge when environmental conditions that favours cheaters or
 cooperator are evolved as well.
 
-The technique used to evolve the environmental settings is the niche
+The technique used to evolve the environmental settings is niche
 construction \cite{b10}. The model is composed by individuals that
 specify two genetic traits:
 \begin{itemize}
@@ -93,7 +93,7 @@ different kind of individuals: \textit{Cooperative + Large},
 \textit{Cooperative + Small}, \textit{Selfish + Large} and
 \textit{Selfish + Small}.
 The model settings favours large groups, having a larger assigned
-resource, and selfish ones, having a faster growth rate. This may to
+resource, and selfish ones, having a faster growth rate. This should lead
 \textit{Selfish + large} to win over the other species. Instead, when
 all the four possible individual types are present, we can observe
 \textit{Cooperative + Small} reaching fixation.
@@ -103,7 +103,7 @@ We describe in this section the settings of the model we
 reproduced. As Powers describes \cite{groups} the model has a
 population of size N where the 4 types of individuals have, initially,
 an equal distribution. The strategy genotype specifies the amount of
-resources that and individual consumes and its growth rate. The group
+resources that an individual consumes and its growth rate. The group
 size genotype specifies the type of group that the individual will be
 part of. After the initialization phase the main routine of the
 program starts. In this routine the individuals of the initial
@@ -115,7 +115,7 @@ within the groups, as described in subsection \ref{repr}. In Powers'
 model reproduction occurs only within groups for $t$ generations. After the reproduction
 step the offspring joins again the migrant pool, this is the fourth
 step. The last step is about rescaling the population back to its
-original size N. This is done by maintaining the proportion between
+original size $N$. This is done by maintaining the proportion between
 the individuals. This routine continues for $T$ generations.
 
 \subsection{reproduction step}\label{repr}
@@ -193,7 +193,7 @@ The program we reimplemented consists of four Java classes. The
 genotypes and is used to represents the bacteria. The
 \textit{IndividualFrequencies} object (see code at appendix \ref{indfre})
 represents the frequencies for a given individual type (among the four
-possible types). The \textit{GroupFrequencies} (see code at appendix
+possible types). The \textit{GroupFrequencies} object (see code at appendix
 \ref{groupfre}) describes the frequencies of all the four types for a
 given aggregation. Lastly, the \textit{Main} class of the program (see
 code at appendix \ref{main}) is responsible for the aggregation in
@@ -202,29 +202,29 @@ normalization steps. We reimplemented the resource allocation
 (\ref{rshare}) and the replicator equation (\ref{offspring}) exactly
 how reported in the original paper. The only relevant implementation
 choice that we took independently from the original paper, due to not
-appearing in Powers' paper, was the rounding of the offspring. Since
-the replicator equation (\ref{offspring}) was not producing integers,
+appearing in Powers' research, was the rounding of the offspring. Since
+the replicator equation (\ref{offspring}) is not producing integers,
 after some testing, we decided to round the offspring during the
 normalization step.
 
 \subsection{Results}
-In this section we analyze the results obtained. Figure \ref{fig1}
+In this section we analyze the reimplementation results. Figure \ref{fig1}
 summarizes the obtained results. The code that produced figure
 \ref{fig1} can be found in appendix \ref{plot1}.
 \begin{figure}
 \includegraphics[width=\textwidth]{./img/Figure_1a.png}
 \caption{The reimplementation results.} \label{fig1}
 \end{figure}
-Our reimplementation, as the results confirm, work as expected and
-reproduces the results obtained by Powers. We can observer that in our
+Our reimplementation, as the results confirm, works as expected and
+reproduces the results obtained by Powers. We can observe that in our
 reimplementation as well the individual type \textit{Cooperators +
-  Small} win over the other species. We can see that, around
+  Small} wins over the other species. We can see that, around
 generation 20, the selfish large starts diminishing and both the
 individuals with the small group gene start rising. Once the
 \textit{Selfish + Large} species is extinct the \textit{Cooperators +
   Small} wins over the other small group individual type. The
 \textit{Selfish + Large} individuals extinction is caused because,
-after driving the \textit{Cooperators + Large} species extinct they
+after driving the \textit{Cooperators + Large} species extinct, they
 loose the advantage of consuming the cooperators resources. Meanwhile
 between the small species the cooperators win over the cheaters since
 they have an advantage when group size is 4 and the generations spent
@@ -256,7 +256,7 @@ original model.
 We implemented this extension part by modifying the Main class of the
 existing Java sources written to test Powers' research
 reproducibility (see code at appendix \ref{mainext}). We used the
-exact same parameters describe in table \ref{tab_parameters}, with the
+exact same parameters described in table \ref{tab_parameters}, with the
 exception of the $t$ value. For testing
 purposes, we limited $t$ to take only two different values per
 execution. This means that every execution will consist of eight species,
@@ -276,7 +276,7 @@ randomness of the aggregation phase. Since reproduction is applied
 only within groups, how these groups are formed can influence the
 number of the species' offspring. The important data to analyze,
 however, is not only the genotype that reaches fixation, but how the small
-groups of the $t5$ are behaving. We can see that in both cases the
+groups with $t = 5$ are behaving. We can see that in both cases the
 \textit{Selfish + Small + $t_5$} drive the \textit{Cooperative +
 Small + $t_5$} type extinct. We can see the same pattern in figures
 \ref{figt2t3} and \ref{figt9t8}. When $t <= 4$ in small groups the
