@@ -254,176 +254,20 @@ original model.
 
 \subsection{Implementation}
 We implemented this extension part by modifying the Main class of the
-existing Java sources implemented to test Powers' research
-reproducibility (see code at appendix). 
-
+existing Java sources written to test Powers' research
+reproducibility (see code at appendix \ref{mainext}). For testing
+purposes, we limited $t$ to only take two different values per
+execution. This means that every execution will consist of eight species,
+four with $t1$ value and four with $t2$ value for the $t$ gene. We
+implemented two different migrant pools according to the $t$
+gene. This, however, does not affect the results since the
+normalization phase rescales the distribution like there is only one
+population.
 \subsection{Results}
 
 
 \section{Conclusion}
 
-
-
-
-
-\section{random}
-\subsection{Genetic algorithm}
-As already anticipated, this algorithm works by creating a fixed size population
-of random board configurations. Each of these board configuration is
-assigned a fitness value to evaluate how close to the goal the
-solution is. In this specific case the fitness function calculates the
-sum of the receiving attacks for each queen, see equation \ref{fitness}. 
-\begin{equation} \label{fitness}
-\sum_{i=1}^{N} attacksForQueen(Q_i)
-\end{equation}
-The configurations with a smaller fitness values are the ones
-performing better and hence the one with a better queen
-placement. After initializing the boards population the algorithm
-starts its main routine. First two parents are selected from the population. The
-first one is selected between the best one of two random individuals
-in the population, and so is the second one. Second a new individual
-is created via sexual reproduction of the two selected parents. Each
-queen acts like a genotype of the board. The reproduction follows
-uniform crossover, hence, each of the parents genotype has 50\%
-probability to be transmitted to the offspring. After the reproduction
-has completed a new board configuration is created. The third step is
-mutation. At this step each genotype of the new board has a certain
-probability to mutate and change in one of the possible values. The
-probability of mutation is 1/N. In other words one queen of the new board
-will randomly move in its column. The fourth and last step is to put
-the offspring back into the population. This is done by selecting two
-individuals at random from the population and substitute the less fit
-one with the new board. This process is repeated until a goal solution
-is found (there are no more queens attacking each other).
-
-\subsection{Min-conflict algorithm}
-The min-conflict algorithm works by reducing the problem to a
-constraint satisfaction one. A \textit{CSP} describes a problem as a
-set of variables and constraints \cite{russel2016artificial}. Every
-variable has a value and the goal is reached when none of the values
-break the constraints. In the N-queens problem the variables are the queens and
-the set of values the position in their column. The constraints are
-that non of the queens should be under attack by another one. The
-algorithm initializes one single board and then enters its main
-routine. The routine selects a conflicting variable at random, in this
-case a queen, and assigns to it the value that minimizes the
-conflicts. This step is repeated until all constraints are satisfied
-and, hence, a solution is found.
-
-\section{Implementation}
-The source code has been implemented in python. A library from the
-University of Southampton containing the code to represent the
-N-queens board has been used. The implementation of the min-conflict
-algorithm followed the pseudo-code given by chapter 6 of
-\cite{russel2016artificial}. The implementation of the genetic
-algorithm followed some key ideas from chapter 4 of
-\cite{russel2016artificial} but it differs in the reproduction
-step. We have implemented it with uniform crossover instead of one
-point crossover. The population size, after some testing, has been
-fixed to 10 times the number of queens. Both algorithms have been
-implemented in their own classes providing modularity for the testing
-phase. They can be executed on different sizes of the N-queens
-board. The two algorithms were tested on different input sizes and the
-results averaged on 10 different runs in order to remove the
-randomness provided by the board initialization. The evaluation
-metrics of the algorithms is the number of steps taken to reach the
-solution. In the case of the genetic algorithm every time a new board
-is created the number of step increases. In the case of the
-min-conflict one the step count increases every time a new conflicting
-variable is picked. The source code of the genetic algorithm, the
-min-conflict algorithm and the testing script can be respectively found in appendix
-\ref{genetic}, \ref{minconflict}, \ref{testing}.
-
-\section{Results}
-In this section we analyze the results obtained by testing the two
-algorithms with different boards sizes. Table \ref{tab_nqueens}
-contains the results of the two algorithms, see appendix
-\ref{appendixB} for the complete output of the program.
-\begin{table}
-\caption{The results of the two algorithms.}\label{tab_nqueens}
-\begin{tabular}{|r|r|r|}
-\hline
-\textbf{Board Size}~~~ & \textbf{Genetic Algorithm}~~~ &
-\textbf{Min-conflict Algorithm}~~~ \\
-\hline
-5 & 79 & 4 \\
-\hline
-6 & 38503 & 22 \\
-\hline
-7 & 3516 & 8 \\
-\hline
-8 & 11222 & 39 \\
-\hline
-9 & 127917 & 46 \\
-\hline
-10 & 265690 & 110 \\
-\hline
-11 & 143654 & 119 \\
-\hline
-\end{tabular}
-\end{table}
-As reported by the experiments, the min-conflict algorithm is
-performing better than the genetic one by 2 or 3 orders of
-magnitude. We can also observe a linear growth in the genetic
-algorithms while the min-conflict one is less affected by the size of
-the board. This is justified by the fact that min-conflict algorithm
-is well known for being incredibly effective on CSP problems and its
-time complexity almost independent of problem size \cite{russel2016artificial}. Another important
-observation is that the initial board configuration plays an important
-role in the algorithm execution. The obtained results support this
-claim, as we can see the number of steps when the board size is 7. In
-this case both algorithms take considerably less than the previous
-step. A board size of 7 probably facilitates to have an easier to
-solve initial state and hence the number of steps to obtain the
-results are lower. For the same reason the implemented genetic
-algorithm has generally a worse performance. Having more boards initialized
-randomly makes the algorithm more subjective to difficult
-configurations. The genotypes of these configurations will be passed
-to the offspring and, hence, the algorithm will take more steps to
-make them extinguish.
-
-On a more general analysis we can see that both algorithms find the
-optimal solution and, hence, are complete. In the genetic algorithm
-case this happens because the fitness landscape has one global optimum
-that is constituted by a board with no queen attacking each other. Via
-reproduction and mutations the algorithm will eventually converge and
-find the optimal solution. The same reasoning applies to the
-min-conflict algorithm. Selecting the conflicting vertices in an
-iterative way and assigning to them the value that gives the minimum
-conflict will eventually make the board to converge to the optimal
-one.
-
-
-\section{Limitations and future work}
-The reproduction step in the genetic algorithm needs further research
-in order to select the most effective technique for the N-queens
-problem. Comparing the performances of uniform crossover, one-point crossover, as
-described in \cite{russel2016artificial}, and k-point crossover can be
-a starting point.
-
-Another interesting addition is the introduction of metaheuristic
-methods to the two algorithms, as suggested by
-\cite{metaheuristic}. The genetic algorithm could take advantage of
-metaheuristics to be more adaptive to the problem and decrease its
-runtime \cite{adaptive_genetic}. The min-conflict algorithm could also
-exploit metaheuristics by using tabu search to avoid returning to
-already computed states \cite{russel2016artificial}.
-
-%% \begin{figure}
-%% \includegraphics[width=\textwidth]{figure_algorithms.png}
-%% \caption{A plot of the results of the two algorithms.} \label{fig1}
-%% \end{figure}
-
-
-\section{Conclusion}
-In this paper we have addressed the use of local search algorithms to
-solve the N-queens optimization problem. Both genetic and
-min-conflict algorithms have been described and tested. As we analyzed in the
-results section, the min-conflict algorithm performs better and its
-model of the problem as a constraint satisfaction problem is more
-suitable for this kind of domain. On the other hand, the genetic
-algorithm is more general purpose and can be also applied to domains
-that are not reducible to \textit{CSP}. 
 
 %
 % ---- Bibliography ----
@@ -507,8 +351,14 @@ This appendix section contains the source code of the program:
 \subsection{GroupFrequencies.java}\label{groupfre}
 \lstinputlisting[language=Java]{./src/GroupFrequencies.java}
 
+\subsection{Main.java (extended version)}\label{mainext}
+\lstinputlisting[language=Java]{./src/MainExtended.java}
+
 \subsection{plotBacteria.py}\label{plot1}
 \lstinputlisting[language=Java]{./src/plotBacteria.py}
+
+\subsection{plotBacteria.py (extended version)}\label{plot1}
+\lstinputlisting[language=Java]{./src/plotBacteriaExtended.py}
 
 %% \section{Appendix B: program output}\label{appendixB}
 %% This appendix section contains a complete output of the program:
