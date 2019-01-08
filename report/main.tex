@@ -79,13 +79,135 @@ facilitates the growth of the cooperative trait is shown in
 grouped together, promoting the cooperative trait. The main research
 point of the paper is, hence, to observe which genetic trait will
 emerge when environmental conditions that favours cheaters or
-cooperator are evolved as well. 
+cooperator are evolved as well.
 
-\section{Design}
+The technique used to evolve the environmental settings is the niche
+construction \cite{b10}. The model is composed by individuals that
+specify two genetic traits:
+\begin{itemize}
+\item Strategy trait: cooperative or selfish
+\item Group size trait: large or small
+\end{itemize}
+Following the settings of the model we can see that there are four
+different kind of individuals: \textit{Cooperative + Large},
+\textit{Cooperative + Small}, \textit{Selfish + Large} and
+\textit{Selfish + Small}.
+The model settings favours large groups, having a larger assigned
+resource, and selfish ones, having a faster growth rate. This may to
+\textit{Selfish + large} to win over the other species. Instead, when
+all the four possible individual types are present, we can observe
+\textit{Cooperative + Small} reaching fixation.
 
-In this section we explain in detail how the two local search
-algorithm are designed.
+\section{Model Details}
+We describe in this section the settings of the model we
+reproduced. As Powers describes \cite{groups} the model has a
+population of size N where the 4 types of individuals have, initially,
+an equal distribution. The strategy genotype specifies the amount of
+resources that and individual consumes and its growth rate. The group
+size genotype specifies the type of group that the individual will be
+part of. After the initialization phase the main routine of the
+program starts. In this routine the individuals of the initial
+population are in one group, called migrant pool. The second phase,
+called aggregation, corresponds to randomly divide individuals into
+groups according to their group size genotype, discarding the
+unassigned individuals. The third phase is about performing reproduction
+within the groups, as described in subsection \ref{repr}. In Powers'
+model reproduction occurs only within groups for $t$ generations. After the reproduction
+step the offspring joins again the migrant pool, this is the fourth
+step. The last step is about rescaling the population back to its
+original size N. This is done by maintaining the proportion between
+the individuals. This routine continues for $T$ generations.
 
+\subsection{reproduction step}\label{repr}
+Reproduction, in this model, depends on $R$, a limited resource influx
+that each group is given. The amount of resource depends on the group
+size. Large groups have a 5\% per capita more resource than their
+smaller counterpart. Reproduction, in this model, happen asexually and
+the offspring are not affected by mutation. The offspring size for
+each individual type is determined only by the consumption and growth rate
+of their parents given a limited resource influx and the distribution
+of other individuals inside their group. The amount of $R$ that
+each genotype receives is given by equation \ref{rshare}.
+\begin{equation}\label{rshare}
+r_i = \frac{n_i G_i C_i}{\sum_{j} (n_j G_j C_j)}
+\end{equation}
+The genotype $i$ receives $r_i$ resource share. $n_i$ represents the
+number of individuals of genotype $i$ in the current generation and
+$G_i$ and $C_i$ represents respectively the growth and consumption
+rate. At the denominator, genotype $j$ represents all the other
+genotypes, $i$ included. Given the resource share of a genotype for a
+given group, its offspring size is determined by the replicator equation \ref{offspring}.
+\begin{equation}\label{offspring}
+n_i(t + 1) = n_i(t) + \frac {r_i}{C_i} - Kn_i(t)
+\end{equation}
+The current generation is represented by $t$. The replicator equation
+\ref{offspring} introduces also a constant mortality term represented by $K$.
+
+\section{Implementation reproduction}
+In this section we discuss the reimplementation of Powers' research
+\cite{groups} and the results we obtained.
+
+\subsection{Implementation details}
+The first step towards reproduction was to gather all the parameters
+used throughout the paper. We were able to reproduce the paper using
+the exact same parameter used by Powers. The parameters that were
+missing from the original paper, like the resource share assigned to
+the groups and the death rate, were given by the University of
+Southampton through assignment specifications. Table
+\ref{tab_parameters} contains all the parameters used for our
+reimplementation.
+\begin{table}
+\caption{The parameters settings of our reproduced model.}\label{tab_parameters}
+\begin{tabular}{|l|r|}
+\hline
+\textbf{Parameters}~~~ & \textbf{Value}~~~ \\
+\hline
+Growth rate (cooperative), $G_c$ & 0.018 \\
+\hline
+Growth rate (selfish), $G_s$ & 0.02 \\
+\hline
+Consumption rate (cooperative), $C_c$ & 0.1 \\
+\hline
+Consumption rate (selfish), $C_s$ & 0.2 \\
+\hline
+Population size, $N$ & 4000 \\
+\hline
+Number of generations, $T$ & 1000 \\
+\hline
+Small group size & 4 \\
+\hline
+Large group size & 40 \\
+\hline
+Small group resource & 4 \\
+\hline
+Large group resource & 50 \\
+\hline
+Number of generations within group $t$ & 4 \\
+\hline
+Death rate $K$ & 0.1 \\
+\hline
+\end{tabular}
+\end{table}
+The program we reimplemented consists of four Java classes. The
+\textit{Individual} object (see code at appendix \ref{ind}) contains the two
+genotypes and is used to represents the bacteria. The
+\textit{IndividualFrequencies} object (see code at appendix \ref{indfre})
+represents the frequencies for a given individual type (among the four
+possible types). The \textit{GroupFrequencies} (see code at appendix
+\ref{groupfre}) describes the frequencies of all the four types for a
+given aggregation. Lastly, the \textit{Main} class of the program (see
+code at appendix \ref{main}) is responsible for the aggregation in
+groups, the reproduction, the dispersal and the
+normalization steps. We reimplemented the resource allocation
+(\ref{rshare}) and the replicator equation (\ref{offspring}) exactly
+how reported in the original paper. The only relevant implementation
+choice that we took independently from the original paper, due to not
+appearing in Powers' paper, was the rounding of the offspring. Since
+the replicator equation (\ref{offspring}) was not producing integers,
+after some testing, we decided to round the offspring during the
+normalization step.
+
+\section{random}
 \subsection{Genetic algorithm}
 As already anticipated, this algorithm works by creating a fixed size population
 of random board configurations. Each of these board configuration is
@@ -314,17 +436,20 @@ This appendix section contains the source code of the program:
 \item Run with: \textit{python2 nqTesting.py}
 \end{itemize}
 
-\subsection{nqGeneticAlg.py}\label{genetic}
-%\lstinputlisting[language=Python]{../nqGeneticAlg.py}
+\subsection{Main.java}\label{main}
+\lstinputlisting[language=Java]{./src/Main.java}
 
-\subsection{nqMinConflict.py}\label{minconflict}
-%\lstinputlisting[language=Python]{../nqMinConflict.py}
+\subsection{Individual.java}\label{ind}
+\lstinputlisting[language=Java]{./src/Individual.java}
 
-\subsection{nqTesting.py}\label{testing}
-%\lstinputlisting[language=Python]{../nqTesting.py}
+\subsection{IndividualFrequencies.java}\label{indfre}
+\lstinputlisting[language=Java]{./src/IndividualFrequencies.java}
 
-\section{Appendix B: program output}\label{appendixB}
-This appendix section contains a complete output of the program:
+\subsection{GroupFrequencies.java}\label{groupfre}
+\lstinputlisting[language=Java]{./src/GroupFrequencies.java}
+
+%% \section{Appendix B: program output}\label{appendixB}
+%% This appendix section contains a complete output of the program:
 %\lstinputlisting{output}
 
 \end{document}
